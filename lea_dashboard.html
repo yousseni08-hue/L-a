@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#100e1c">
+  <title>Léa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ══════════════════════════════════════════
+       TOKENS
+    ══════════════════════════════════════════ */
+    :root {
+      --bg:             #100e1c;
+      --surface:        #1a1730;
+      --surface-2:      #221e38;
+      --border:         rgba(167,139,250,.10);
+      --border-2:       rgba(167,139,250,.22);
+      --accent:         #a78bfa;
+      --accent-light:   #c4b5fd;
+      --accent-glow:    rgba(167,139,250,.20);
+      --text:           #ede8ff;
+      --text-2:         #a89dc9;
+      --text-muted:     #6b5f8c;
+      --success:        #86efac;
+      --success-bg:     rgba(134,239,172,.07);
+      --success-border: rgba(134,239,172,.20);
+      --fire:           #fb923c;
+      --r-sm:           12px;
+      --r:              18px;
+      --r-lg:           24px;
+    }
+
+    /* ══════════════════════════════════════════
+       RESET & BASE
+    ══════════════════════════════════════════ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { -webkit-text-size-adjust: none; text-size-adjust: none; }
+
+    body {
+      font-family: 'DM Sans', -apple-system, system-ui, sans-serif;
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 90% 40% at 50% -5%,
+          rgba(167,139,250,.09) 0%, transparent 70%);
+      background-attachment: fixed;
+      color: var(--text);
+      min-height: 100dvh;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ══════════════════════════════════════════
+       LAYOUT
+    ══════════════════════════════════════════ */
+    .wrap {
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 0 1rem 3.5rem;
+    }
+
+    /* ══════════════════════════════════════════
+       HEADER
+    ══════════════════════════════════════════ */
+    .header {
+      padding: 2.75rem 0 1.75rem;
+      text-align: center;
+    }
+
+    .greeting {
+      font-size: clamp(1.65rem, 5.5vw, 2.1rem);
+      font-weight: 600;
+      letter-spacing: -.03em;
+      line-height: 1.15;
+      margin-bottom: .45rem;
+    }
+
+    .g-emoji {
+      display: inline-block;
+    }
+    .g-emoji.moon { animation: moon-sway 4s ease-in-out infinite; }
+    .g-emoji.sun  { animation: sun-pulse 3s ease-in-out infinite; }
+
+    @keyframes moon-sway {
+      0%,100% { transform: rotate(-10deg); }
+      50%      { transform: rotate(10deg); }
+    }
+    @keyframes sun-pulse {
+      0%,100% { transform: scale(1); }
+      50%     { transform: scale(1.12); }
+    }
+
+    .date-txt {
+      font-size: .86rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: .01em;
+    }
+
+    /* ══════════════════════════════════════════
+       STATS ROW
+    ══════════════════════════════════════════ */
+    .stats-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem;
+      margin-bottom: .875rem;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r);
+      padding: 1rem 1.25rem;
+      text-align: center;
+    }
+
+    .stat-val {
+      font-size: 2.1rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: .2rem;
+    }
+    .stat-val.fire { color: var(--fire); }
+    .stat-val.star { color: var(--accent-light); }
+
+    .stat-lbl {
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
+
+    /* ══════════════════════════════════════════
+       CARD
+    ══════════════════════════════════════════ */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--r-lg);
+      padding: 1.5rem;
+      margin-bottom: .875rem;
+    }
+
+    .card-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-title {
+      font-size: .9375rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .card-badge {
+      font-size: .75rem;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    /* ══════════════════════════════════════════
+       PROGRESS BAR
+    ══════════════════════════════════════════ */
+    .prog-track {
+      height: 2px;
+      background: var(--border-2);
+      border-radius: 99px;
+      overflow: hidden;
+      margin-bottom: 1.25rem;
+    }
+
+    .prog-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%);
+      border-radius: 99px;
+      transition: width .5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ══════════════════════════════════════════
+       CHECKLIST ITEMS (routine & video)
+    ══════════════════════════════════════════ */
+    .tasks {
+      display: flex;
+      flex-direction: column;
+      gap: .325rem;
+    }
+
+    /* shared base for both task & v-step */
+    .task, .v-step {
+      display: flex;
+      align-items: center;
+      gap: .875rem;
+      padding: .875rem .875rem;
+      border: 1px solid transparent;
+      border-radius: var(--r-sm);
+      cursor: pointer;
+      transition: background .18s, border-color .18s, opacity .3s, transform .1s;
+      -webkit-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .task:hover, .v-step:hover {
+      background: var(--surface-2);
+      border-color: var(--border);
+    }
+
+    .task:active, .v-step:active { transform: scale(.98); }
+
+    .task.done, .v-step.done { opacity: .48; }
+
+    /* ─── Round checkbox ─── */
+    .cb {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-2);
+      display: grid;
+      place-items: center;
+      transition:
+        background .22s cubic-bezier(.34,1.56,.64,1),
+        border-color .22s,
+        box-shadow .22s;
+    }
+
+    .task.done .cb {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    .cb-chk {
+      width: 9px;
+      height: 5.5px;
+      border-left: 2px solid #fff;
+      border-bottom: 2px solid #fff;
+      transform: rotate(-45deg) scale(0);
+      opacity: 0;
+      margin-top: -2px;
+      transition:
+        transform .2s cubic-bezier(.34,1.56,.64,1) .04s,
+        opacity .15s .04s;
+    }
+
+    .task.done .cb-chk { transform: rotate(-45deg) scale(1); opacity: 1; }
+
+    .task-body { flex: 1; min-width: 0; }
+
+    .task-name {
+      font-size: .9rem;
+      color: var(--text);
+      transition: color .3s;
+    }
+
+    .task.done .task-name {
+      color: var(--text-muted);
+      text-decoration: line-through;
+      text-decoration-color: var(--text-muted);
+    }
+
+    .task-time {
+      font-size: .71rem;
+      color: var(--text-muted);
+      margin-top: .05rem;
+    }
+
+    /* ─── Numbered step (video) ─── */
+    .step-num {
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      background: rgba(167,139,250,.08);
+      border: 1px solid var(--border-2);
+      display: grid;
+      place-items: center;
+      font-size: .72rem;
+      font-weight: 600;
+      color: var(--accent-light);
+      transition: background .22s, border-color .22s, color .22s;
+    }
+
+    .v-step.done .step-num {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    .step-text {
+      font-size: .9rem;
+      color: var(--text);
+      transition: color .3s;
+    }
+
+    .v-step.done .step-text {
+      color: var(--text-muted);
+      text-decoration: line-through;
+      text-decoration-color: var(--text-muted);
+    }
+
+    /* ══════════════════════════════════════════
+       SUCCESS BANNER
+    ══════════════════════════════════════════ */
+    .success {
+      display: none;
+      background: var(--success-bg);
+      border: 1px solid var(--success-border);
+      border-radius: var(--r-sm);
+      padding: .875rem 1rem;
+      text-align: center;
+      margin-top: .875rem;
+    }
+
+    .success.show {
+      display: block;
+      animation: pop-in .38s cubic-bezier(.34,1.56,.64,1);
+    }
+
+    @keyframes pop-in {
+      from { opacity: 0; transform: scale(.94) translateY(6px); }
+      to   { opacity: 1; transform: scale(1)  translateY(0); }
+    }
+
+    .success-msg {
+      font-size: .9rem;
+      font-weight: 500;
+      color: var(--success);
+    }
+
+    /* ══════════════════════════════════════════
+       TRACKER GRID
+    ══════════════════════════════════════════ */
+    .tracker {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: .45rem .3rem;
+    }
+
+    .t-lbl {
+      text-align: center;
+      font-size: .61rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding-bottom: .25rem;
+    }
+
+    .dot-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .dot {
+      width: clamp(26px, 4.8vw, 33px);
+      height: clamp(26px, 4.8vw, 33px);
+      border-radius: 50%;
+      border: 1.5px solid var(--border-2);
+      background: transparent;
+      transition: background .3s, box-shadow .3s, border-color .3s;
+    }
+
+    .dot.done {
+      background: var(--accent);
+      border-color: var(--accent);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+
+    .dot.today {
+      border-color: var(--accent-light);
+      border-style: dashed;
+    }
+
+    .dot.done.today { border-style: solid; }
+
+    .dot.future { opacity: .15; }
+
+    .tracker-legend {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      margin-top: .875rem;
+      font-size: .71rem;
+      color: var(--text-muted);
+    }
+
+    .leg {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+    }
+
+    .leg-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-2);
+      flex-shrink: 0;
+    }
+
+    .leg-dot.done {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* ══════════════════════════════════════════
+       BUTTON
+    ══════════════════════════════════════════ */
+    .btn-ghost {
+      font-family: inherit;
+      font-size: .77rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border-2);
+      border-radius: 8px;
+      padding: .35rem .8rem;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    .btn-ghost.confirm {
+      border-color: var(--accent);
+      color: var(--accent-light);
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <!-- ── HEADER ──────────────────────────────── -->
+  <header class="header">
+    <div class="greeting">
+      <span id="g-text"></span><span class="g-emoji" id="g-emoji"></span>
+    </div>
+    <div class="date-txt" id="date-txt"></div>
+  </header>
+
+  <!-- ── STATS ───────────────────────────────── -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-val fire" id="stat-cur">—</div>
+      <div class="stat-lbl">🔥 Streak actuel</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val star" id="stat-best">—</div>
+      <div class="stat-lbl">⭐ Meilleur streak</div>
+    </div>
+  </div>
+
+  <!-- ── ROUTINE ──────────────────────────────── -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">🌙 Routine du soir</div>
+      <div class="card-badge" id="r-badge">0 / 7</div>
+    </div>
+    <div class="prog-track">
+      <div class="prog-fill" id="r-prog" style="width:0%"></div>
+    </div>
+    <div class="tasks" id="r-tasks"></div>
+    <div class="success" id="r-success">
+      <div class="success-msg">✨ Routine complète ! Bonne soirée Léa</div>
+    </div>
+  </div>
+
+  <!-- ── TRACKER ──────────────────────────────── -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">📅 Mes 4 dernières semaines</div>
+    </div>
+    <div class="tracker" id="tracker"></div>
+    <div class="tracker-legend">
+      <div class="leg"><div class="leg-dot done"></div>Complété</div>
+      <div class="leg"><div class="leg-dot"></div>Non fait</div>
+      <div class="leg"><div class="leg-dot today" style="border-color:var(--accent-light);border-style:dashed;"></div>Aujourd'hui</div>
+    </div>
+  </div>
+
+  <!-- ── VIDEO ───────────────────────────────── -->
+  <div class="card">
+    <div class="card-hd">
+      <div class="card-title">🎬 Montage vidéo</div>
+      <button class="btn-ghost" id="v-reset-btn" onclick="handleVideoReset()">Nouveau projet</button>
+    </div>
+    <div class="tasks" id="v-steps"></div>
+    <div class="success" id="v-success">
+      <div class="success-msg">🎉 Montage terminé ! Super travail</div>
+    </div>
+  </div>
+
+</div><!-- /wrap -->
+
+<script>
+/* ══════════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════════ */
+const K = {
+  ROUTINE: 'lea_routine_v1',
+  HISTORY: 'lea_history_v1',
+  VIDEO:   'lea_video_v1',
+};
+
+const ROUTINE = [
+  { name: "Poser son sac / s'installer", time: '2 min' },
+  { name: 'Ranger ce qui traîne',         time: '10–15 min' },
+  { name: 'Faire à manger',               time: '20–25 min' },
+  { name: 'Manger',                       time: '' },
+  { name: 'Vaisselle',                    time: '5–10 min' },
+  { name: 'Douche',                       time: '15–20 min' },
+  { name: 'Projet perso ou révisions',    time: '' },
+];
+
+const VIDEO = [
+  'Sélectionner les clips',
+  'Faire les coupes',
+  'Placer sur la timeline',
+  'Transitions',
+  'Effets',
+  'Couleurs',
+  'Musique',
+];
+
+const DAYS_FR   = ['dimanche','lundi','mardi','mercredi','jeudi','vendredi','samedi'];
+const MONTHS_FR = ['janvier','février','mars','avril','mai','juin','juillet','août',
+                   'septembre','octobre','novembre','décembre'];
+
+/* ══════════════════════════════════════════════
+   UTILS
+══════════════════════════════════════════════ */
+const $  = id => document.getElementById(id);
+const pad = n  => String(n).padStart(2, '0');
+
+function dateStr(d) {
+  return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+}
+
+function today() { return dateStr(new Date()); }
+
+function dateFr(d) {
+  return `${DAYS_FR[d.getDay()]} ${d.getDate()} ${MONTHS_FR[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+function load(key, def) {
+  try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : def; }
+  catch { return def; }
+}
+
+function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+/* ══════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════ */
+let routineState, historyState, videoState;
+
+function loadAll() {
+  historyState = load(K.HISTORY, {});
+  videoState   = load(K.VIDEO,   Array(VIDEO.length).fill(false));
+
+  const raw = load(K.ROUTINE, { date: '', checked: Array(ROUTINE.length).fill(false) });
+  const t   = today();
+  if (raw.date !== t) {
+    routineState = { date: t, checked: Array(ROUTINE.length).fill(false) };
+    save(K.ROUTINE, routineState);
+  } else {
+    routineState = raw;
+  }
+}
+
+/* ══════════════════════════════════════════════
+   GREETING
+══════════════════════════════════════════════ */
+function renderGreeting() {
+  const h     = new Date().getHours();
+  const isDay = h >= 6 && h < 19;
+
+  $('g-text').textContent = isDay ? 'Bonjour Léa\u00A0' : 'Bonsoir Léa\u00A0';
+
+  const emoji = $('g-emoji');
+  if (isDay) {
+    emoji.textContent = '☀️';
+    emoji.className   = 'g-emoji sun';
+  } else {
+    emoji.textContent = '🌙';
+    emoji.className   = 'g-emoji moon';
+  }
+
+  const now = new Date();
+  const str = dateFr(now);
+  $('date-txt').textContent = str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/* ══════════════════════════════════════════════
+   STREAKS
+══════════════════════════════════════════════ */
+function calcStreaks() {
+  const h   = historyState;
+  const t   = today();
+  const now = new Date(); now.setHours(0,0,0,0);
+
+  // Build last 400 days (oldest → newest)
+  const dates = [];
+  const d0    = new Date(now);
+  d0.setDate(d0.getDate() - 399);
+  for (let i = 0; i < 400; i++) {
+    dates.push(dateStr(d0));
+    d0.setDate(d0.getDate() + 1);
+  }
+
+  // Best streak
+  let best = 0, tmp = 0;
+  for (const s of dates) {
+    if (h[s]) { tmp++; best = Math.max(best, tmp); }
+    else        tmp = 0;
+  }
+
+  // Current streak (back from today if done, else from yesterday)
+  let cur  = 0;
+  const c  = new Date(now);
+  if (!h[t]) c.setDate(c.getDate() - 1);
+  while (cur < 500) {
+    if (h[dateStr(c)]) { cur++; c.setDate(c.getDate() - 1); }
+    else break;
+  }
+
+  return { cur, best };
+}
+
+function renderStats() {
+  const { cur, best } = calcStreaks();
+  $('stat-cur').textContent  = cur;
+  $('stat-best').textContent = best;
+}
+
+/* ══════════════════════════════════════════════
+   ROUTINE CHECKLIST
+══════════════════════════════════════════════ */
+function markTodayDone() {
+  const t = today();
+  if (!historyState[t]) {
+    historyState[t] = true;
+    save(K.HISTORY, historyState);
+    renderStats();
+    renderTracker();
+  }
+}
+
+function renderRoutine() {
+  const el      = $('r-tasks');
+  el.innerHTML  = '';
+  const checked = routineState.checked;
+  const count   = checked.filter(Boolean).length;
+  const total   = ROUTINE.length;
+
+  ROUTINE.forEach((task, i) => {
+    const div = document.createElement('div');
+    div.className = 'task' + (checked[i] ? ' done' : '');
+    div.innerHTML = `
+      <div class="cb"><div class="cb-chk"></div></div>
+      <div class="task-body">
+        <div class="task-name">${task.name}</div>
+        ${task.time ? `<div class="task-time">${task.time}</div>` : ''}
+      </div>`;
+    div.addEventListener('click', () => {
+      routineState.checked[i] = !routineState.checked[i];
+      save(K.ROUTINE, routineState);
+      renderRoutine();
+    });
+    el.appendChild(div);
+  });
+
+  $('r-badge').textContent      = `${count} / ${total}`;
+  $('r-prog').style.width       = `${(count / total) * 100}%`;
+
+  const banner = $('r-success');
+  if (count === total) { banner.classList.add('show'); markTodayDone(); }
+  else                   banner.classList.remove('show');
+}
+
+/* ══════════════════════════════════════════════
+   TRACKER (4-week grid)
+══════════════════════════════════════════════ */
+function renderTracker() {
+  const el = $('tracker');
+  el.innerHTML = '';
+
+  const t   = today();
+  const now = new Date(); now.setHours(0,0,0,0);
+
+  // Monday of current week
+  const dow     = now.getDay();               // 0=Sun
+  const fromMon = (dow + 6) % 7;             // 0=Mon
+  const monday  = new Date(now);
+  monday.setDate(now.getDate() - fromMon);
+
+  // Start 3 more weeks back = 4 weeks total
+  const start = new Date(monday);
+  start.setDate(monday.getDate() - 21);
+
+  // Day labels Mon → Sun
+  ['L','M','M','J','V','S','D'].forEach(lbl => {
+    const d = document.createElement('div');
+    d.className   = 't-lbl';
+    d.textContent = lbl;
+    el.appendChild(d);
+  });
+
+  for (let i = 0; i < 28; i++) {
+    const d   = new Date(start);
+    d.setDate(start.getDate() + i);
+    const ds  = dateStr(d);
+    const isT = ds === t;
+    const isF = d > now;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'dot-wrap';
+
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    if (historyState[ds]) dot.classList.add('done');
+    if (isT)              dot.classList.add('today');
+    if (isF)              dot.classList.add('future');
+    dot.title = dateFr(d).charAt(0).toUpperCase() + dateFr(d).slice(1);
+
+    wrap.appendChild(dot);
+    el.appendChild(wrap);
+  }
+}
+
+/* ══════════════════════════════════════════════
+   VIDEO CHECKLIST
+══════════════════════════════════════════════ */
+let videoResetPending = false;
+let videoResetTimer   = null;
+
+function handleVideoReset() {
+  const btn = $('v-reset-btn');
+  if (!videoResetPending) {
+    videoResetPending = true;
+    btn.textContent = 'Confirmer ?';
+    btn.classList.add('confirm');
+    videoResetTimer = setTimeout(() => {
+      videoResetPending = false;
+      btn.textContent = 'Nouveau projet';
+      btn.classList.remove('confirm');
+    }, 3000);
+  } else {
+    clearTimeout(videoResetTimer);
+    videoResetPending = false;
+    btn.textContent = 'Nouveau projet';
+    btn.classList.remove('confirm');
+    videoState = Array(VIDEO.length).fill(false);
+    save(K.VIDEO, videoState);
+    renderVideo();
+  }
+}
+
+function renderVideo() {
+  const el    = $('v-steps');
+  el.innerHTML = '';
+  const count  = videoState.filter(Boolean).length;
+
+  VIDEO.forEach((name, i) => {
+    const div = document.createElement('div');
+    div.className = 'v-step' + (videoState[i] ? ' done' : '');
+    div.innerHTML = `
+      <div class="step-num">${i + 1}</div>
+      <div class="step-text">${name}</div>`;
+    div.addEventListener('click', () => {
+      videoState[i] = !videoState[i];
+      save(K.VIDEO, videoState);
+      renderVideo();
+    });
+    el.appendChild(div);
+  });
+
+  const banner = $('v-success');
+  if (count === VIDEO.length) banner.classList.add('show');
+  else                         banner.classList.remove('show');
+}
+
+/* ══════════════════════════════════════════════
+   MIDNIGHT RESET (checked every minute)
+══════════════════════════════════════════════ */
+function midnightCheck() {
+  if (routineState.date && routineState.date !== today()) {
+    routineState = { date: today(), checked: Array(ROUTINE.length).fill(false) };
+    save(K.ROUTINE, routineState);
+    renderGreeting();
+    renderRoutine();
+    renderTracker();
+    renderStats();
+  }
+}
+
+/* ══════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════ */
+loadAll();
+renderGreeting();
+renderStats();
+renderRoutine();
+renderTracker();
+renderVideo();
+
+setInterval(midnightCheck, 60_000);
+</script>
+</body>
+</html>
